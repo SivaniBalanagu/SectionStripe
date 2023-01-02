@@ -1,57 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<title>Accept a card payment</title>
-<meta name="description" content="A demo of a card payment on Stripe" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<link rel="stylesheet" href="global.css" />
-<script src="https://js.stripe.com/v3/"></script>
-<script
-	src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
-<script th:inline="javascript">
-	/*<![CDATA[*/
-
-	var stripePublicKey = /*[[${stripePublicKey}]]*/null;
-	var amount = /*[[${amount}]]*/null;
-	var email = /*[[${email}]]*/null;
-	var featureRequest = /*[[${featureRequest}]]*/null;
-
-	/*]]>*/
-</script>
-<script src="client.js" defer></script>
-</head>
-
-<body>
-	<!-- Display a payment form -->
-	<div class="container">
-		<div class="form-card">
-			<form id="payment-form">
-				<p>
-					<b>Credit card details to complete payment</b>
-				</p>
-				<p>
-					Press the pay now button to complete your payment of <span
-						th:text="${amount}"></span>INR.
-				</p>
-				<div id="card-element" class="form-control">
-					<!--Stripe.js injects the Card Element-->
-				</div>
-				<button id="submit" class="btn btn-primary">
-					<div class="spinner hidden" id="spinner"></div>
-					<span id="button-text">Pay now</span>
-				</button>
-				<p id="card-error" role="alert"></p>
-				<p class="result-message hidden">
-					Payment succeeded, see the result in your <a href=""
-						target="_blank">Stripe dashboard.</a> Refresh the page to pay
-					again.
-				</p>
-			</form>
-
-		</div>
-
-	</div>
-</body>
+<html xmlns='http://www.w3.org/1999/xhtml' xmlns:th='http://www.thymeleaf.org'>
+    <head>
+        <title>Checkout</title>
+        <style>
+            body {
+                font-family: 'arial';
+            }
+            #checkout-form input,
+            #checkout-form button {
+                display: block;
+                margin: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <form action='/create-payment-intent' method='POST' id='checkout-form'>
+            <input type='hidden' th:value='${amount}' name='amount' />
+            <label>Price:<span th:text='${amount/100}' /></label>
+            <!-- NOTE: data-key/data-amount/data-currency will be rendered by Thymeleaf -->
+            <script
+                src='https://checkout.stripe.com/checkout.js' 
+                class='stripe-button'
+                th:attr='data-key=${stripePublicKey},
+                         data-amount=${amount},
+                         data-currency=${currency}'
+                data-name='Baeldung'
+                data-description='Spring course checkout'
+                data-image='http://www.baeldung.com/wp-content/themes/baeldung/favicon/android-chrome-192x192.png'
+                data-locale='auto'
+                data-zip-code='false'>
+            </script>
+        </form>
+    </body>
 </html>
